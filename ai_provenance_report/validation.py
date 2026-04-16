@@ -81,7 +81,7 @@ def validate_pr_body(pr_body: str, label_names: set[str] | None = None) -> Valid
 
     if not found and "ai-assisted" not in {label.lower() for label in (label_names or set())}:
         errors.append(
-            "PR body must include checkbox line: - [ ] AI-Assisted changes included "
+            "PR body must include checkbox line: - [ ] AI-Assisted changes included"
             "(or add label 'ai-assisted')."
         )
     if checked:
