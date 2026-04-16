@@ -18,14 +18,20 @@ def _git(args: list[str], cwd: Path) -> str:
     return result.stdout.strip()
 
 
-def _iter_pr_commits(repo_root: Path, base_ref: str, head_ref: str) -> list[tuple[str, str]]:
+def _iter_pr_commits(
+    repo_root: Path,
+    base_ref: str,
+    head_ref: str,
+    exempt_merge_commits: bool,
+) -> list[tuple[str, str]]:
     commits = _git(["rev-list", f"{base_ref}..{head_ref}"], cwd=repo_root).splitlines()
     out: list[tuple[str, str]] = []
     for sha in commits:
         if not sha:
             continue
         parents = _git(["show", "--no-patch", "--format=%P", sha], cwd=repo_root).split()
-        if len(parents) > 1:
+        # Merge commits can be exempted via .ai-provenance.yml policy.
+        if exempt_merge_commits and len(parents) > 1:
             continue
         message = _git(["show", "--no-patch", "--format=%B", sha], cwd=repo_root)
         out.append((sha, message))
@@ -64,7 +70,12 @@ def validate_pr_event(
     pr_result = validate_pr_body(pr_body, label_names=labels)
     commit_errors: list[str] = []
 
-    for sha, message in _iter_pr_commits(repo_root, base_ref=base_ref, head_ref=head_ref):
+    for sha, message in _iter_pr_commits(
+        repo_root,
+        base_ref=base_ref,
+        head_ref=head_ref,
+        exempt_merge_commits=bool(config.get("exempt_merge_commits", True)),
+    ):
         result = validate_commit_message_text(
             message=message,
             allowed_tools=config.get("allowed_ai_tools", []) or None,

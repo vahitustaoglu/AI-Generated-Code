@@ -44,6 +44,12 @@ class PrValidationTests(unittest.TestCase):
         self.assertTrue(found)
         self.assertTrue(checked)
 
+    def test_checkbox_and_label_prefers_label_checked(self) -> None:
+        body = "- [ ] AI-Assisted changes included\n"
+        found, checked = parse_pr_checkbox(body, {"ai-assisted"})
+        self.assertTrue(found)
+        self.assertTrue(checked)
+
     def test_checked_requires_tool(self) -> None:
         body = "- [x] AI-Assisted changes included\n"
         result = validate_pr_body(body)

@@ -58,7 +58,7 @@ def generate_report(cwd: Path, revision_range: str, estimate_line_share: bool) -
     shas = _commit_shas(cwd, revision_range)
     total = len(shas)
     ai_yes_commits: list[str] = []
-    missing = 0
+    missing_or_invalid = 0
 
     for sha in shas:
         trailers = parse_trailers(_commit_message(cwd, sha))
@@ -66,7 +66,7 @@ def generate_report(cwd: Path, revision_range: str, estimate_line_share: bool) -
         if assisted == "yes":
             ai_yes_commits.append(sha)
         if assisted not in {"yes", "no"}:
-            missing += 1
+            missing_or_invalid += 1
 
     line_share = None
     if estimate_line_share and total > 0:
@@ -79,7 +79,7 @@ def generate_report(cwd: Path, revision_range: str, estimate_line_share: bool) -
         range=revision_range,
         total_commits=total,
         ai_assisted_commits=len(ai_yes_commits),
-        missing_declaration_commits=missing,
+        missing_declaration_commits=missing_or_invalid,
         ai_assisted_line_share_percent=line_share,
     )
 
