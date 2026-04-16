@@ -70,8 +70,9 @@ def generate_report(cwd: Path, revision_range: str, estimate_line_share: bool) -
 
     line_share = None
     if estimate_line_share and total > 0:
-        total_lines = sum(_diff_lines_for_commit(cwd, sha) for sha in shas)
-        ai_lines = sum(_diff_lines_for_commit(cwd, sha) for sha in ai_yes_commits)
+        diff_lines = {sha: _diff_lines_for_commit(cwd, sha) for sha in shas}
+        total_lines = sum(diff_lines.values())
+        ai_lines = sum(diff_lines[sha] for sha in ai_yes_commits)
         line_share = (ai_lines / total_lines * 100.0) if total_lines > 0 else 0.0
 
     return Report(
