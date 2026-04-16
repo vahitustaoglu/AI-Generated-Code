@@ -17,7 +17,7 @@ def _log_bypass(repo_root: Path, message_path: Path, env_var: str, log_file: str
     log_path = repo_root / log_file
     log_path.parent.mkdir(parents=True, exist_ok=True)
     payload = (
-        f"{dt.datetime.utcnow().isoformat()}Z "
+        f"{dt.datetime.now(dt.timezone.utc).isoformat()} "
         f"event=commit-msg-bypass env_var={env_var} "
         f"message_file={message_path}\n"
     )
