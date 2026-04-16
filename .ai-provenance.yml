@@ -1,0 +1,7 @@
+enforcement_mode: strict
+allowed_ai_tools: []
+bypass:
+  env_var: AI_DECLARATION_BYPASS
+  allow: true
+  log_file: .git/ai-declaration-bypass.log
+exempt_merge_commits: true
