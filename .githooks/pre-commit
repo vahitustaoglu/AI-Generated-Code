@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+set -eu
+
+echo "[ai-provenance] pre-commit hook installed (optional). Declaration is enforced at commit-msg/CI."
+exit 0
